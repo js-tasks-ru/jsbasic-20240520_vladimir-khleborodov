@@ -189,6 +189,7 @@ export default class StepSlider {
   
   _onPointerUp = (event) => {
     this._sliderThumb.removeEventListener('pointermove', this._onPointerMove);
+    this._sliderThumb.removeEventListener('pointerup', this._onPointerUp);
     this._slider.classList.remove('slider_dragging');
     
     this._calcClosestStep(event);
