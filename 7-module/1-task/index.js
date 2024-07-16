@@ -5,7 +5,6 @@ export default class RibbonMenu {
     this.categories = categories;
     this._ribbonMenu = this._ribbonMenuTemplate();
     this._ribbonMenuInner = this._ribbonMenu.querySelector('.ribbon__inner');
-    this._selectedRibbonCategory = null;
     
     this._addEventListeners();
   }
@@ -42,6 +41,13 @@ export default class RibbonMenu {
     const categoriesArr = [];
     for (const {name, id} of this.categories) {
       const category = createElement(`<a href="#" class="ribbon__item" data-id="${id}">${name}</a>`);
+      if (category.dataset.id === '') {
+        category.classList.add('ribbon__item_active');
+        
+        this._selectedRibbonCategory = category;
+        this.value = category.dataset.id;
+      }
+      
       categoriesArr.push(category);
     }
     
@@ -82,19 +88,12 @@ export default class RibbonMenu {
   
   _selectCategory = (event) => {
     let target = event.target;
-    let newCategory = null;
     
     if (!target.closest('.ribbon__item')) return;
     
     event.preventDefault();
     
-    if (!this._selectedRibbonCategory) {
-      this._selectedRibbonCategory = target;
-      this._selectedRibbonCategory.classList.add('ribbon__item_active');
-      return;
-    }
-    
-    newCategory = target;
+    let newCategory = target;
     
     if (newCategory === this._selectedRibbonCategory) return;
     
@@ -106,8 +105,9 @@ export default class RibbonMenu {
   _selectCategoryCustomEvent = (event) => {
     const ribbonItem = event.target.closest('.ribbon__item');
     if (ribbonItem) {
+      this.value = ribbonItem.dataset.id;
       const ribbonSelectEvent = new CustomEvent('ribbon-select', {
-      detail: ribbonItem.dataset.id,
+      detail: this.value,
       bubbles: true,
       cancelable: true
     });
